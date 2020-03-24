@@ -26,9 +26,13 @@ func cull(root string) (e error) {
 
 	e = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		files = append(files, path)
-		return nil
+		return err
 
 	})
+
+	if e != nil {
+		return e
+	}
 
 	for _, file := range files {
 		fmt.Println(file)
