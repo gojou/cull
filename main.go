@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 func main() {
 
-	root := "emptydir"
+	root := "."
 	err := cull(root)
 	if err != nil {
 		panic(err)
@@ -22,9 +23,15 @@ func cull(root string) (e error) {
 	e = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		// TODO if the file is a directory, recursively call cull(file)
 		if !info.IsDir() {
-			path = "\t" + path
+			// path = "\t" + path
+			if !info.ModTime().After(time.Date(2017, time.January, 1, 0, 0, 0, 0, time.Local)) {
+				fmt.Println(path + " " + info.ModTime().Format(time.RFC1123))
+				return os.Remove(path)
+
+			}
+
 		}
-		fmt.Println(path)
+
 		return err
 
 	})
